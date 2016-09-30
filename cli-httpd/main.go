@@ -55,6 +55,7 @@ func main() {
 	listenAddr := fmt.Sprintf(":%d", http_port)
 
 	logg.LogTo("OCR_HTTP", "Starting listener on %v", listenAddr)
+	logg.LogTo("OCR_HTTP", "OFS OCR SERVER Started  %v", listenAddr)
 	logg.LogError(http.ListenAndServe(listenAddr, nil))
 
 }
