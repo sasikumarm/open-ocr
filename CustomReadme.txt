@@ -1,1 +1,45 @@
+1.docker-compose.yml
+# Start messaging broker
+rabbitmq:
+  image: tutum/rabbitmq
+  dns: ["8.8.8.8"]
+  environment:
+    - "RABBITMQ_PASS=Phaish9ohbaidei6oole"
 
+# Start transformation worker
+strokewidthtransform:
+  image: tleyden5iwx/open-ocr-preprocessor
+  volumes: 
+    - ./scripts/:/opt/open-ocr/
+  dns: ["8.8.8.8"]
+  links:
+    - rabbitmq
+  command: "/opt/open-ocr/open-ocr-preprocessor -amqp_uri amqp://admin:Phaish9ohbaidei6oole@rabbitmq/ -preprocessor stroke-width-transform"
+
+# Start OCR worker
+openocrworker:
+  image: sasikumarmani/open-ocr
+  volumes: 
+    - ./scripts/:/opt/open-ocr/
+  dns: ["8.8.8.8"]
+  links:
+    - rabbitmq
+  command: "/opt/open-ocr/open-ocr-worker -amqp_uri amqp://admin:Phaish9ohbaidei6oole@rabbitmq/"
+
+# Start http server
+openocr:
+  image: sasikumarmani/open-ocr
+  dns: ["8.8.8.8"]
+  volumes: 
+    - ./scripts/:/opt/open-ocr/
+  links:
+    - rabbitmq
+  ports:
+    - "9292:9292"
+  command: "/opt/open-ocr/open-ocr-httpd -amqp_uri amqp://admin:Phaish9ohbaidei6oole@rabbitmq/ -http_port 9292"
+  
+docker build - < open-ocr.dockerfile
+
+docker tag 405bf9ff8d5b sasikumarmani/open-ocr:latest
+
+docker push sasikumarmani/open-ocr
