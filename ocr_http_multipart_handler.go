@@ -26,6 +26,7 @@ func NewOcrHttpMultipartHandler(r RabbitConfig) *OcrHttpMultipartHandler {
 func (s *OcrHttpMultipartHandler) extractParts(req *http.Request) (OcrRequest, error) {
 
 	logg.LogTo("OCR_HTTP", "request to ocr-file-upload")
+	logg.LogTo("OCR_HTTP", "request header : %v", req)
 	ocrReq := OcrRequest{}
 
 	switch req.Method {
@@ -40,7 +41,8 @@ func (s *OcrHttpMultipartHandler) extractParts(req *http.Request) (OcrRequest, e
 			return ocrReq, fmt.Errorf("Expected multipart related")
 		}
 
-		reader := multipart.NewReader(req.Body, attrs["boundary"])
+        logg.LogTo("OCR_HTTP", "request body : %v", req.Body)
+		reader := multipart.NewReader(string.NewReader(req.Body), attrs["boundary"])
 
 		for {
 
