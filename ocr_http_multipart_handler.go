@@ -41,7 +41,7 @@ func (s *OcrHttpMultipartHandler) extractParts(req *http.Request) (OcrRequest, e
 			return ocrReq, fmt.Errorf("Expected multipart related")
 		}
 
-        logg.LogTo("OCR_HTTP", "request body : %v", req.Body)
+                //logg.LogTo("OCR_HTTP", "request body : %v", req.Body)
 		reader := multipart.NewReader(strings.NewReader(req.Body), attrs["boundary"])
 
 		for {
