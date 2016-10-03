@@ -49,14 +49,17 @@ func (s *OcrHttpMultipartHandler) extractParts(req *http.Request) (OcrRequest, e
 		reader := multipart.NewReader(req.Body, attrs["boundary"])
 
 		for {
-
+			logg.LogTo("OCR_HTTP", "Inside For Loop", reader)
 			part, err := reader.NextPart()
 
 			if err == io.EOF {
 				break
 			}
+			logg.LogTo("OCR_HTTP", "Part", part)
 			contentTypeOuter := part.Header["Content-Type"][0]
+			logg.LogTo("OCR_HTTP", "contentTypeOuter", contentTypeOuter)
 			contentType, attrs, _ := mime.ParseMediaType(contentTypeOuter)
+			logg.LogTo("OCR_HTTP", "Attrs", attrs)
 
 			logg.LogTo("OCR_HTTP", "attrs: %v", attrs)
 
