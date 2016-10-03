@@ -47,38 +47,39 @@ func (s *OcrHttpMultipartHandler) extractParts(req *http.Request) (OcrRequest, e
         logg.LogTo("OCR_HTTP", "request body : %v", s)
         */
 		reader := multipart.NewReader(req.Body, attrs["boundary"])
-		logg.LogTo("OCR_HTTP", "Part Reader : %+v", reader);
 
 
 		for {
 			//logg.LogTo("OCR_HTTP", "Inside For Loop", reader)
 			part, err := reader.NextPart()
-			logg.LogTo("OCR_HTTP", "Part next  : %+v", part);
+			logg.LogTo("OCR_HTTP", "Part next  : %+v", part)
 
 			if err == io.EOF {
 				break
 			}
-			logg.LogTo("OCR_HTTP", "Part", part)
+			
 			contentTypeOuter := part.Header["Content-Type"][0]
 			logg.LogTo("OCR_HTTP", "contentTypeOuter", contentTypeOuter)
+			
 			contentType, attrs, _ := mime.ParseMediaType(contentTypeOuter)
-			logg.LogTo("OCR_HTTP", "Attrs", attrs)
+			logg.LogTo("OCR_HTTP", "contentType", contentType)
 
 			logg.LogTo("OCR_HTTP", "attrs: %v", attrs)
 
 			switch contentType {
 			case "application/json":
+				logg.LogTo("OCR_HTTP", "application/json : %+v", part)
 				decoder := json.NewDecoder(part)
 				err := decoder.Decode(&ocrReq)
 				if err != nil {
 					return ocrReq, fmt.Errorf("Unable to unmarshal json: %s", err)
 				}
-				part.Close()
+				//part.Close()
 			default:
 				if !strings.HasPrefix(contentType, "image") {
 					return ocrReq, fmt.Errorf("Expected content-type: image/*")
 				}
-
+				logg.LogTo("OCR_HTTP", "image/png : %+v", part)
 				partContents, err := ioutil.ReadAll(part)
 				if err != nil {
 					return ocrReq, fmt.Errorf("Failed to read mime part: %v", err)
