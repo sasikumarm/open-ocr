@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"strings"
+	"bytes"
 
 	"github.com/couchbaselabs/logg"
 )
@@ -40,8 +41,11 @@ func (s *OcrHttpMultipartHandler) extractParts(req *http.Request) (OcrRequest, e
 		if !strings.HasPrefix(h, "multipart/related") {
 			return ocrReq, fmt.Errorf("Expected multipart related")
 		}
+        buf := new(bytes.Buffer)
+        buf.ReadFrom(req.Body)
+        s := buf.String()
+        logg.LogTo("OCR_HTTP", "request body : %v", s)
 
-                //logg.LogTo("OCR_HTTP", "request body : %v", req.Body)
 		reader := multipart.NewReader(req.Body, attrs["boundary"])
 
 		for {
