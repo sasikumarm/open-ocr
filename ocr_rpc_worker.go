@@ -174,6 +174,8 @@ func (w *OcrRpcWorker) resultForDelivery(d amqp.Delivery) (OcrResult, error) {
 	}
 
 	ocrEngine := NewOcrEngine(ocrRequest.EngineType)
+	
+	logg.LogTo("OCR_WORKER", "DEBUG INCOMM ocrRequest: %s", ocrRequest)
 
 	ocrResult, err = ocrEngine.ProcessRequest(ocrRequest)
 

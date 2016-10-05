@@ -96,6 +96,9 @@ func (t TesseractEngineArgs) Export() []string {
 
 func (t TesseractEngine) ProcessRequest(ocrRequest OcrRequest) (OcrResult, error) {
 
+    logg.LogTo("OCR_TESSERACT", "DEBUG INCOMM ocrRequest.ImgUrl: %s", ocrRequest.ImgUrl)
+    logg.LogTo("OCR_TESSERACT", "DEBUG INCOMM ImgBytes: %s", ocrRequest.ImgBytes)
+    
 	tmpFileName, err := func() (string, error) {
 		if ocrRequest.ImgUrl != "" {
 			return t.tmpFileFromImageUrl(ocrRequest.ImgUrl)
